@@ -1,23 +1,23 @@
-#ifndef MAT_TEST_H
-#define MAT_TEST_H
+#ifndef MATRIX_OVER_FIELD_H
+#define MATRIX_OVER_FIELD_H
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
 #include <initializer_list>
 template <class F>
-class mat
+class matrix_over_field
 {
 public:
     size_t r, c;
     F *data;
-    mat(const size_t &r = 0, const size_t &c = 0);
-    mat(std::initializer_list<std::initializer_list<F>> A);
-    ~mat();
+    matrix_over_field(const size_t &r = 0, const size_t &c = 0);
+    matrix_over_field(std::initializer_list<std::initializer_list<F>> A);
+    ~matrix_over_field();
     void operator=(const size_t &y);
 };
 
 template <class F>
-mat<F>::mat(const size_t &r, const size_t &c) : r{r}, c{c}
+matrix_over_field<F>::matrix_over_field(const size_t &r, const size_t &c) : r{r}, c{c}
 {
     printf("constructor0 (%llu %llu)\n", this, this->data);
     this->data = (F *)malloc(sizeof(F) * r * c);
@@ -25,7 +25,7 @@ mat<F>::mat(const size_t &r, const size_t &c) : r{r}, c{c}
 }
 
 template <class F>
-mat<F>::mat(std::initializer_list<std::initializer_list<F>> A) : r{A.size()}, c{0}
+matrix_over_field<F>::matrix_over_field(std::initializer_list<std::initializer_list<F>> A) : r{A.size()}, c{0}
 {
     printf("constructor1 (%llu %llu)\n", this, this->data);
     for (auto &x : A)
@@ -48,13 +48,13 @@ mat<F>::mat(std::initializer_list<std::initializer_list<F>> A) : r{A.size()}, c{
 }
 
 template <class F>
-mat<F>::~mat()
+matrix_over_field<F>::~matrix_over_field()
 {
     printf("Destructors (%llu %llu)\n\n", this, this->data);
 }
 
 template <class F>
-void mat<F>::operator=(const size_t &y)
+void matrix_over_field<F>::operator=(const size_t &y)
 {
     printf("operator=0 (%llu %llu)\n", this, this->data);
     const size_t c = this->c;
@@ -95,7 +95,7 @@ void mat<F>::operator=(const size_t &y)
 }
 
 template <class F>
-std::ostream &operator<<(std::ostream &fo, const mat<F> &a)
+std::ostream &operator<<(std::ostream &fo, const matrix_over_field<F> &a)
 {
     printf("operator<< (%llu %llu)\n", &a, a.data);
     F(*A)
@@ -115,10 +115,33 @@ std::ostream &operator<<(std::ostream &fo, const mat<F> &a)
 }
 
 template <class F>
-mat<F> operator*(const mat<F> &a, const mat<F> &b)
+std::istream &operator>>(std::istream &fi, matrix_over_field<F> &z)
+{
+    free(z.data);
+    char ch;
+    while (ch != '[')
+    {
+        fi >> ch;
+    }
+    fi >> z.r >> z.c;
+    z.data = (F *)malloc(sizeof(F) * z.r * z.c);
+    F(*A)
+    [z.c] = (F(*)[z.c])(z.data);
+    for (size_t i = 0; i < z.r; i++)
+    {
+        for (size_t j = 0; j < z.c; j++)
+        {
+            fi >> A[i][j];
+        }
+    }
+    return fi;
+}
+
+template <class F>
+matrix_over_field<F> operator*(const matrix_over_field<F> &a, const matrix_over_field<F> &b)
 {
     printf("operator* (%llu %llu) (%llu %llu)\n", &a, a.data, &b, b.data);
-    mat<F> c(a.r, b.c);
+    matrix_over_field<F> c(a.r, b.c);
     c = 0;
     F(*A)
     [a.c] = (F(*)[a.c])a.data;
@@ -141,7 +164,7 @@ mat<F> operator*(const mat<F> &a, const mat<F> &b)
 }
 
 template <class F>
-void gauss_elimination_with_partial_pivot(mat<F> &a, mat<F> &b, mat<size_t> &l)
+void gauss_elimination_with_partial_pivot(matrix_over_field<F> &a, matrix_over_field<F> &b, matrix_over_field<size_t> &l)
 {
     printf("gauss_elimination_with_partial_pivot (%llu %llu) (%llu %llu) (%llu %llu)\n", &a, a.data, &b, b.data, &l, l.data);
     const size_t ac = a.c;
