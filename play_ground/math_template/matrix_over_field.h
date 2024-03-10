@@ -14,6 +14,9 @@ public:
     matrix_over_field(std::initializer_list<std::initializer_list<F>> A);
     ~matrix_over_field();
     void operator=(const size_t &y);
+    void operator=(const matrix_over_field &y);
+    matrix_over_field operator[](const std::string &s);
+    matrix_over_field T();
 };
 
 template <class F>
@@ -50,7 +53,7 @@ matrix_over_field<F>::matrix_over_field(std::initializer_list<std::initializer_l
 template <class F>
 matrix_over_field<F>::~matrix_over_field()
 {
-    printf("Destructors (%llu %llu)\n\n", this, this->data);
+    printf("matrix_over_field Destructors (%llu %llu)\n\n", this, this->data);
 }
 
 template <class F>
@@ -60,38 +63,103 @@ void matrix_over_field<F>::operator=(const size_t &y)
     const size_t c = this->c;
     F(*A)
     [c] = (F(*)[c])this->data;
-    switch (y)
+    printf("op=%llu\n", y);
+    for (size_t i = 0; i < this->r; i++)
     {
-    case 1:
-        printf("op=1\n");
-        for (size_t i = 0; i < this->r; i++)
+        for (size_t j = 0; j < this->c; j++)
         {
-            for (size_t j = 0; j < this->c; j++)
+            if (i == j)
             {
-                if (i == j)
-                {
-                    A[i][j] = 1;
-                }
-                else
-                {
-                    A[i][j] = 0;
-                }
+                A[i][j] = y;
             }
-        }
-        break;
-
-    default:
-        printf("op=0\n");
-        for (size_t i = 0; i < this->r; i++)
-        {
-            for (size_t j = 0; j < this->c; j++)
+            else
             {
                 A[i][j] = 0;
             }
         }
-        break;
     }
     printf("operator=0 end\n\n");
+}
+
+template <class F>
+void matrix_over_field<F>::operator=(const matrix_over_field<F> &y)
+{
+    printf("operator=1 (%llu %llu)\n", this, this->data);
+    free(this->data);
+    this->c = y.c;
+    this->r = y.r;
+    this->data = (F *)malloc(sizeof(F) * this->r * this->c);
+    const size_t c = this->c;
+    F(*A)
+    [c] = (F(*)[c])this->data;
+    F(*B)
+    [c] = (F(*)[c])y.data;
+    for (size_t i = 0; i < y.r; i++)
+    {
+        for (size_t j = 0; j < y.c; j++)
+        {
+            A[i][j] = B[i][j];
+        }
+    }
+    printf("operator=1 end\n\n");
+}
+
+template <class F>
+matrix_over_field<F> matrix_over_field<F>::operator[](const std::string &s)
+{
+    printf("operator[]0 (%llu %llu)\n", this, this->data);
+    matrix_over_field<F> A(0, 0);
+    const size_t l = s.length();
+    const size_t r = this->r, c = this->c;
+    size_t t = 0;
+    for (size_t i = 0; i < l; i++)
+    {
+        if (s[i] == ',')
+        {
+            break;
+        }
+    }
+    const size_t rl = t;
+    const size_t cl = l - t - 1;
+    size_t rs, re, cs, ce;
+    size_t rt = 0, ct = 0;
+    for (size_t i = 0; i < t; i++)
+    {
+        if (s[i] == ':')
+        {
+            break;
+        }
+    }
+    for (size_t i = t + 1; i < l; i++)
+    {
+        if (s[i] == ':')
+        {
+            break;
+        }
+    }
+    printf("operator[]0 end\n\n");
+    return A;
+}
+
+template <class F>
+matrix_over_field<F> matrix_over_field<F>::T()
+{
+    printf("T (%llu %llu)\n", this, this->data);
+    matrix_over_field<F> C(this->c, this->r);
+    const size_t c = this->c, r = this->r;
+    F(*A)
+    [c] = (F(*)[c])this->data;
+    F(*B)
+    [r] = (F(*)[r])C.data;
+    for (size_t i = 0; i < r; i++)
+    {
+        for (size_t j = 0; j < c; j++)
+        {
+            B[j][i] = A[i][j];
+        }
+    }
+    printf("T end\n\n");
+    return C;
 }
 
 template <class F>
@@ -160,6 +228,52 @@ matrix_over_field<F> operator*(const matrix_over_field<F> &a, const matrix_over_
         }
     }
     printf("operator* end\n\n");
+    return c;
+}
+
+template <class F>
+matrix_over_field<F> operator+(const matrix_over_field<F> &a, const matrix_over_field<F> &b)
+{
+    printf("operator+ (%llu %llu) (%llu %llu)\n", &a, a.data, &b, b.data);
+    matrix_over_field<F> c(a.r, b.c);
+    c = 0;
+    F(*A)
+    [a.c] = (F(*)[a.c])a.data;
+    F(*B)
+    [b.c] = (F(*)[b.c])b.data;
+    F(*C)
+    [c.c] = (F(*)[c.c])c.data;
+    for (size_t i = 0; i < a.r; i++)
+    {
+        for (size_t j = 0; j < b.c; j++)
+        {
+            C[i][j] = A[i][j] + B[i][j];
+        }
+    }
+    printf("operator+ end\n\n");
+    return c;
+}
+
+template <class F>
+matrix_over_field<F> operator-(const matrix_over_field<F> &a, const matrix_over_field<F> &b)
+{
+    printf("operator- (%llu %llu) (%llu %llu)\n", &a, a.data, &b, b.data);
+    matrix_over_field<F> c(a.r, b.c);
+    c = 0;
+    F(*A)
+    [a.c] = (F(*)[a.c])a.data;
+    F(*B)
+    [b.c] = (F(*)[b.c])b.data;
+    F(*C)
+    [c.c] = (F(*)[c.c])c.data;
+    for (size_t i = 0; i < a.r; i++)
+    {
+        for (size_t j = 0; j < b.c; j++)
+        {
+            C[i][j] = A[i][j] - B[i][j];
+        }
+    }
+    printf("operator- end\n\n");
     return c;
 }
 
