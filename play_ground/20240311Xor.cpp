@@ -74,6 +74,12 @@ int main()
                                               })};
     size_t A[] = {0, 1, 2, 3};
     matrix_over_field<long double> opt, grad;
+    for (size_t i = 0; i < 100; i++)
+    {
+        std::cout << "-";
+    }
+    std::cout << std::endl;
+
     for (size_t i = 0; i < 1e6; i++)
     {
         for (auto &a : A)
