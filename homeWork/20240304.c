@@ -99,6 +99,37 @@ void gaussBackPropMainRow(size_t rowNum, size_t colNum, long double A[rowNum][co
     }
     return;
 }
+void LUMainRow(size_t rowNum, size_t colNum, long double A[rowNum][colNum], size_t lable[rowNum])
+{
+    for (size_t c = 0; c < rowNum; c++)
+    {
+        size_t temp = c;
+        for (size_t r = c; r < rowNum; r++)
+        {
+            if (A[lable[r]][c] > A[lable[temp]][c])
+            {
+                temp = r;
+            }
+        }
+        // printf("%llu %llu %llu %llu\n\n", temp, c, lable[temp], lable[c]);
+        if (temp != c)
+        {
+            lable[temp] ^= lable[c];
+            lable[c] ^= lable[temp];
+            lable[temp] ^= lable[c];
+        }
+        for (size_t r = c + 1; r < rowNum; r++)
+        {
+            A[lable[r]][c] /= A[lable[c]][c];
+            for (size_t c2 = c + 1; c2 < colNum; c2++)
+            {
+                A[lable[r]][c2] -= A[lable[r]][c] * A[lable[c]][c2];
+            }
+            // A[lable[r]][c] = 0;
+        }
+    }
+    return;
+}
 
 int main()
 {
@@ -133,12 +164,13 @@ int main()
 
     printlabel(3, 4, A, lable);
     printf("\n");
-    gaussEliminationMainRow(3, 4, A, lable);
+    // gaussEliminationMainRow(3, 4, A, lable);
+    LUMainRow(3, 4, A, lable);
     printlabel(3, 4, A, lable);
     printf("\n");
-    gaussBackPropMainRow(3, 4, A, x, lable);
-    printlabel(3, 4, A, lable);
-    printf("\n");
+    // gaussBackPropMainRow(3, 4, A, x, lable);
+    // printlabel(3, 4, A, lable);
+    // printf("\n");
     printlabel(3, 1, x, lable);
     printf("\n");
     for (size_t i = 0; i < 3; i++)
