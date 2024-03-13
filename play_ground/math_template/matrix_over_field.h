@@ -12,6 +12,7 @@ public:
     F *data;
     matrix_over_field(const size_t &r = 0, const size_t &c = 0);
     matrix_over_field(const std::initializer_list<std::initializer_list<F>> &A);
+    matrix_over_field(const matrix_over_field &A);
     ~matrix_over_field();
     void operator=(const F &y);
     void operator=(const matrix_over_field &y);
@@ -51,8 +52,31 @@ matrix_over_field<F>::matrix_over_field(const std::initializer_list<std::initial
 }
 
 template <class F>
+matrix_over_field<F>::matrix_over_field(const matrix_over_field<F> &A)
+{
+    // printf("matrix_over_field constructor2 (%llu %llu)\n", this, this->data);
+    this->c = A.c;
+    this->r = A.r;
+    this->data = (F *)malloc(sizeof(F) * this->r * this->c);
+    F(*a)
+    [A.c] = (F(*)[A.c])A.data;
+    F(*b)
+    [A.c] = (F(*)[A.c])this->data;
+    for (size_t i = 0; i < A.r; i++)
+    {
+        for (size_t j = 0; j < A.c; j++)
+        {
+            b[i][j] = a[i][j];
+        }
+    }
+
+    // printf("matrix_over_field constructor2 end (%llu %llu)\n\n", this, this->data);
+}
+
+template <class F>
 matrix_over_field<F>::~matrix_over_field()
 {
+    free(this->data);
     // printf("matrix_over_field Destructors (%llu %llu)\n\n", this, this->data);
 }
 
@@ -194,7 +218,7 @@ std::ostream &operator<<(std::ostream &fo, const matrix_over_field<F> &a)
 template <class F>
 std::istream &operator>>(std::istream &fi, matrix_over_field<F> &z)
 {
-    // printf("matrix_over_field operator>> (%llu %llu)\n", &a, a.data);
+    // printf("matrix_over_field operator>> (%llu %llu)\n", &z, z.data);
     free(z.data);
     char ch;
     while (ch != '[')
@@ -374,6 +398,25 @@ matrix_over_field<F> point_wise_multiplication(const matrix_over_field<F> &a, co
     }
     // printf("matrix_over_field point_wise_multiplication end\n\n");
     return c;
+}
+
+template <class F>
+F sum(const matrix_over_field<F> &a)
+{
+    // printf("matrix_over_field point_wise_multiplication (%llu %llu) (%llu %llu)\n", &a, a.data, &b, b.data);
+    F sum = 0;
+    const size_t ac = a.c;
+    F(*A)
+    [ac] = (F(*)[ac])a.data;
+    for (size_t i = 0; i < a.r; i++)
+    {
+        for (size_t j = 0; j < a.c; j++)
+        {
+            sum = sum + A[i][j];
+        }
+    }
+    // printf("matrix_over_field point_wise_multiplication end\n\n");
+    return sum;
 }
 
 #endif
