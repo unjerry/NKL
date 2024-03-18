@@ -40,6 +40,28 @@ void gaussEliminationPlain(size_t rowNum, size_t colNum, long double A[rowNum][c
     }
     return;
 }
+void doolittle(size_t rowNum, size_t colNum, long double A[rowNum][colNum])
+{
+    for (size_t lb = 0; lb < colNum; lb++)
+    {
+        for (size_t i = lb; i < colNum; i++)
+        {
+            for (size_t k = 0; k < lb; k++)
+            {
+                A[lb][i] -= A[lb][k] * A[k][i];
+            }
+        }
+        for (size_t i = lb + 1; i < rowNum; i++)
+        {
+            for (size_t k = 0; i < lb; i++)
+            {
+                A[i][lb] -= A[i][k] * A[k][lb];
+            }
+            A[i][lb] /= A[lb][lb];
+        }
+    }
+    return;
+}
 void gaussBackProp(size_t rowNum, size_t colNum, long double A[rowNum][colNum], long double *x)
 {
     for (size_t c = 1; c <= rowNum; c++)
@@ -140,6 +162,12 @@ int main()
             {11, 3, 5, 2},
             {1, 3, 11.3, 2},
         };
+    long double B[3][3] =
+        {
+            {12, 3, 4.5},
+            {11, 3, 5},
+            {1, 3, 11.3},
+        };
     long double x[3] = {0};
     size_t lable[3] = {0, 1, 2};
     // long double **p;
@@ -164,19 +192,22 @@ int main()
 
     printlabel(3, 4, A, lable);
     printf("\n");
-    // gaussEliminationMainRow(3, 4, A, lable);
-    LUMainRow(3, 4, A, lable);
-    printlabel(3, 4, A, lable);
-    printf("\n");
-    // gaussBackPropMainRow(3, 4, A, x, lable);
+    // // gaussEliminationMainRow(3, 4, A, lable);
+    // LUMainRow(3, 4, A, lable);
     // printlabel(3, 4, A, lable);
     // printf("\n");
-    printlabel(3, 1, x, lable);
+    // // gaussBackPropMainRow(3, 4, A, x, lable);
+    // // printlabel(3, 4, A, lable);
+    // // printf("\n");
+    // printlabel(3, 1, x, lable);
+    // printf("\n");
+    // for (size_t i = 0; i < 3; i++)
+    // {
+    //     printf("%llu", lable[i]);
+    // }
     printf("\n");
-    for (size_t i = 0; i < 3; i++)
-    {
-        printf("%llu", lable[i]);
-    }
+    doolittle(3, 3, B);
+    printt(3, 3, B);
 
     // printf("%d ", A[0]);
     // printf("%d ", A[1]);
