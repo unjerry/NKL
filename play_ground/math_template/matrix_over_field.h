@@ -220,7 +220,7 @@ std::istream &operator>>(std::istream &fi, matrix_over_field<F> &z)
 {
     // printf("matrix_over_field operator>> (%llu %llu)\n", &z, z.data);
     free(z.data);
-    char ch;
+    char ch = 0;
     while (ch != '[')
     {
         fi >> ch;
