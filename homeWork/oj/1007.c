@@ -5,8 +5,8 @@ void swap(int n, double A[][100], double b[], int r, int k);
 void Eliminate(int n, double A[][100], double b[]);
 void Substitude(int n, double A[][100], double b[], double x[]);
 
-// ÒÔÏÂ³ÌĞòÎªÁËºÍÍ¨³£ËùËµµÄ¾ØÕóµÚÒ»ĞĞµÚÒ»ÁĞÊÊÓ¦£¬ÉáÈ¥µÚÁãĞĞµÚÁãÁĞ
-// ÈôĞèÒª´ÓµÚÁãĞĞµÚÁãÁĞ¿ªÊ¼´¢´æ£¬ÇëĞŞ¸Ä¸÷¸öÑ­»·³õÊ¼Ìõ¼şÓëÖĞÖ¹Ìõ¼ş (i = 1; ;i <= n) => (i = 0; ; i < n)
+// ä»¥ä¸‹ç¨‹åºä¸ºäº†å’Œé€šå¸¸æ‰€è¯´çš„çŸ©é˜µç¬¬ä¸€è¡Œç¬¬ä¸€åˆ—é€‚åº”ï¼Œèˆå»ç¬¬é›¶è¡Œç¬¬é›¶åˆ—
+// è‹¥éœ€è¦ä»ç¬¬é›¶è¡Œç¬¬é›¶åˆ—å¼€å§‹å‚¨å­˜ï¼Œè¯·ä¿®æ”¹å„ä¸ªå¾ªç¯åˆå§‹æ¡ä»¶ä¸ä¸­æ­¢æ¡ä»¶ (i = 1; ;i <= n) => (i = 0; ; i < n)
 
 int main()
 {
@@ -14,7 +14,7 @@ int main()
     int n;
     double A[100][100] = {}, b[100] = {}, x[100] = {};
 
-    scanf("%d", &n); // ¶ÁÈë¾ØÕó´óĞ¡ n , Ôö¹ã¾ØÕó (A|b)
+    scanf("%d", &n); // è¯»å…¥çŸ©é˜µå¤§å° n , å¢å¹¿çŸ©é˜µ (A|b)
     for (int i = 1; i <= n; i++)
     {
         for (int j = 1; j <= n; j++)
@@ -28,7 +28,7 @@ int main()
 
     Substitude(n, A, b, x);
 
-    // Êä³ö½âÏòÁ¿
+    // è¾“å‡ºè§£å‘é‡
     for (int i = 1; i <= n; i++)
     {
         printf("%lf ", x[i]);
@@ -47,7 +47,7 @@ int main()
 
 void swap(int n, double A[][100], double b[], int r, int k)
 {
-    // ½»»»Ôö¹ã¾ØÕó (A|b) Ö® r,k Á½ĞĞ
+    // äº¤æ¢å¢å¹¿çŸ©é˜µ (A|b) ä¹‹ r,k ä¸¤è¡Œ
     // printf("swap\n");
     double tmp;
     tmp = b[r];
@@ -64,10 +64,10 @@ void swap(int n, double A[][100], double b[], int r, int k)
 void Eliminate(int n, double A[][100], double b[])
 {
 
-    // ÏûÔª
+    // æ¶ˆå…ƒ
     for (int k = 1; k <= n; k++)
     {
-        // Ñ¡ÔñÖ÷Ôª
+        // é€‰æ‹©ä¸»å…ƒ
         int tmp = k;
         for (int r = k + 1; r <= n; r++)
         {
@@ -76,12 +76,12 @@ void Eliminate(int n, double A[][100], double b[])
                 tmp = r;
             }
         }
-        // ÈôÖ÷ÔªĞĞÓë²Ù×÷ĞĞ²»Í¬£¬½»»»Á½ĞĞ
+        // è‹¥ä¸»å…ƒè¡Œä¸æ“ä½œè¡Œä¸åŒï¼Œäº¤æ¢ä¸¤è¡Œ
         if (tmp != k)
         {
             swap(n, A, b, tmp, k);
         }
-        // ÏûÔª
+        // æ¶ˆå…ƒ
         for (int r = k + 1; r <= n; r++)
         {
             A[r][k] /= A[k][k];
@@ -96,7 +96,7 @@ void Eliminate(int n, double A[][100], double b[])
 
 void Substitude(int n, double A[][100], double b[], double x[])
 {
-    // »Ø´ú
+    // å›ä»£
     for (int c = n; c >= 1; c--)
     {
         x[c] = b[c] / A[c][c];
